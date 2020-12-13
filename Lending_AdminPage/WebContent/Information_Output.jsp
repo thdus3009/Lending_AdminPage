@@ -14,13 +14,17 @@
 <style type="text/css">
 	.b_btn{
 		border-radius: 10px;
-		text-decoration: none;
+		text-decoration: none !important;
 		display:block;
 	    width:80px;
 	    line-height:30px;
 	    text-align:center;
 	    background-color:#222;
-	    color:#fff;
+	    color:white;
+	}
+	.b_btn:hover{
+		color:white;
+	}
 </style>
 
 </head>
@@ -52,11 +56,11 @@ $().ready(function(){
 			var html = "";
 			html+= "<div class=\"container\">";
 			html+= "<h1>Lending Info</h1>";
-			html+= "<a class=\"b_btn\" href=\"\">대관 추가</a>";
+			html+= "<a class=\"b_btn\" href=\"${pageContext.request.contextPath}/Information_Registration.jsp\">대관 추가</a>";
 			html+= "<br>";
 			html+= "<table class=\"table\">";
 			html+= "<thead><tr>";
-			html+= "<th>카테고리</th><th>대관이름</th><th>대관신청자</th><th>URL</th><th>이미지</th> <th></th><th></th>";
+			html+= "<th>카테고리</th><th>대관이름</th><th>대관신청자</th><th>URL</th><th>이미지</th><th></th><th></th>";
 			html+= "</tr></thead>";
 			html+= "<tbody>";
 			

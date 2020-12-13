@@ -7,27 +7,31 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <script src="${pageContext.request.contextPath}/resource/js/jquery.js"></script>
 
-<script src="${pageContext.request.contextPath}/resource/dropzone/dropzone.js"></script>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resource/dropzone/dropzone.min.css" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 
 <style type="text/css">
-	.btn{
-		border-radius: 20px;
-		text-decoration: none;
+	.b_btn{
+		border-radius: 10px;
+		text-decoration: none !important;
 		display:block;
-	    width:80px;
+	    width:70px;
 	    line-height:30px;
 	    text-align:center;
 	    background-color:#222;
-	    color:#fff;
+	    color:white;
 	}
-
+	.b_btn:hover{
+		color:white;
+	}
 </style>
 
 <title>Insert title here</title>
 </head>
 <body>
-
+<div class="container">
+	<h1>Lending Registration</h1>
+	<a class="b_btn" href="${pageContext.request.contextPath}/Information_Output.jsp">목록</a>
+	<br>
 	카테고리값 : <input type="text" class="category"/>
 	<br><br>
 	대관명 : <input type="text" class="lending_name"/>
@@ -37,18 +41,20 @@
 	short_URL : <input type="text" size="34" class="short_url"/>
 	<br><br>
 	
-	<div id="preview">
-		<img id="img1" /> 
-	</div>
 	이미지 : <!-- <input type="text"  class="image" value="ddd.jpg">  -->
 	<!--  required : 'form이 submit 될 때' 파일이 반드시 선택되어야 하는지 여부를 결정하는 것 -->
 	<!--  multiple : 다중선택 가능 -->  
+	<div id="preview">
+		<img id="img1" /> 
+	</div>
+	<br>
        <input type="file" id="FILE_TAG" accept="image/*" />
        
-	<br><br>
-       <a class="btn" href="javascript:uploadFile();">전송</a>
+	<br>
+       <a class="btn btn-danger" href="javascript:uploadFile();">전송</a>
+       
 	<!-- <button id="save">등록</button> -->
-
+</div>
 		
 	
 	
