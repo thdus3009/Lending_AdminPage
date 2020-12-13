@@ -68,14 +68,15 @@ $().ready(function(){
 		    	var short_url = lending[i].short_url;
 		    	var image = lending[i].image;
 		    	
-		    	var link = "/image/"; //Servers프로젝트의 server.xml를 참고(주소설정)
-
+		    	var link = "/image/"; 
+				console.log(link+image);
+				
 		    	html+= "<tr class=\"c_"+i+"\">";
 		    	html+= "<td>"+category+"</td>";
 		    	html+= "<td>"+lending_name+"</td>";
 		    	html+= "<td>"+organizer_name+"</td>";
 		    	html+= "<td><a  href=\""+short_url+"\" target=\"_blank\" >"+short_url+"</a></td>";
-		    	html+= "<td><img src=\""+link+image+"\" style=\"width:100px;\"></td>";
+		    	html+= "<td><img src=\""+link+image+"\" style=\"width:100px;\"></td>"; 
 		    	/* html+= "<td>"+image+"</td>"; */ 
 		    	html+= "<td><button class=\"btn btn-danger\" onclick=\"lending_delete("+i+",'"+image+"')\">삭제</button></td>";
 		    	html+= "<td><button class=\"btn btn-info\" onclick=\"lending_update("+i+",'"+image+"')\">수정</button></td>";

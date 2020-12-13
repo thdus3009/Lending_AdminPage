@@ -198,22 +198,7 @@ public class LendingController extends HttpServlet {
 			Part filePart = request.getPart("uploadFile");
 			String image = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
 
-			// -----------------파일업로드 시작
-
-			// 서버의 실제 경로
-			String applicationPath = request.getServletContext().getRealPath("");
-			String uploadFilePath = applicationPath + UPLOAD_DIR;
-
-			// System.out.println(" LOG :: [서버 루트 경로] :: " + applicationPath);
-			// System.out.println(" LOG :: [파일 저장 경로] :: " + uploadFilePath);
-
-			// creates the save directory if it does not exists
-			File fileSaveDir = new File(uploadFilePath);
-
-			// 파일 경로 없으면 생성
-			if (!fileSaveDir.exists()) {
-				fileSaveDir.mkdirs();
-			}
+			// -----------------파일업로드 시작 (로컬에 올리기)
 
 			// System.out.println(image);
 			// System.out.println("파일이름: "+filePart.getSubmittedFileName());
@@ -225,6 +210,9 @@ public class LendingController extends HttpServlet {
 
 			System.out.println("중복이름 방지 : " + image);
 
+			//local에 저장한 경우, 이미지를 웹상에서 보기위해서는 FTP를 이용하거나 인터넷에 이미지가 올라가있는 상태여야 한다.
+			String uploadFilePath = "D:\\"+"test";
+			
 			//File.separator 사용하는 이유 : 리눅스와 윈도우의 파일 경로가 틀리기 때문에 이걸쓰면 자동으로 잡아준다.
 			System.out.println(" LOG :: [ 업로드 파일 경로 ] :: " + uploadFilePath + File.separator + image);
 			filePart.write(uploadFilePath + File.separator + image);
@@ -303,9 +291,7 @@ public class LendingController extends HttpServlet {
 
 			// ------------------폴더안에 있는 파일 삭제
 
-			String applicationPath = request.getServletContext().getRealPath("");
-			String uploadFilePath = applicationPath + UPLOAD_DIR;
-			
+			String uploadFilePath = "D:\\"+"test"; //string주소가 에러나면 이런식으로 슬래쉬(/)부분마다 끊어서 연결해준다. 
 			File file = new File(uploadFilePath + File.separator + image);
 
 			//System.out.println("파일삭제 경로맞나????? "+file);
