@@ -71,8 +71,9 @@ public class LendingController extends HttpServlet {
 			String MongoDB_IP = "localhost";
 			int MongoDB_Port = 27017;
 			mongoClient = new MongoClient(MongoDB_IP, MongoDB_Port);
-
-			System.out.println("server 접속 성공dd");
+			
+			System.out.println("++++++++++++++++");
+			System.out.println("server 접속 성공");
 
 			// 쓰기권한 부여
 			WriteConcern w = new WriteConcern(1, 2000);// 쓰게 락 갯수, 연결 시간 2000
@@ -83,7 +84,7 @@ public class LendingController extends HttpServlet {
 			DB db = mongoClient.getDB("lending");
 			// 컬렉션 가져오기
 			coll = db.getCollection("lending");
-			System.out.println("db,collection 접속 성공dd");
+			System.out.println("db,collection 접속 성공");
 			System.out.println();
 
 		} catch (Exception e) {
@@ -233,7 +234,7 @@ public class LendingController extends HttpServlet {
 				// System.out.println((doc.get("_id").toString()).getClass().getName());
 				// //변수 타입 확인
 				String docID = doc.get("_id").toString(); // _id 조회
-				System.out.println("_id 조회 : " + docID);
+				//System.out.println("_id 조회 : " + docID);
 
 				System.out.println("데이터 추가(update+$push)");
 
@@ -326,22 +327,77 @@ public class LendingController extends HttpServlet {
 			out.println(res.getAsJsonObject());
 
 			
-			//수정
+			//수정 (이전 파일이름 조회해서 삭제 > 새로운 파일 생성)
 		} else if (request.getRequestURI().endsWith("update.len")) {
 			
-			System.out.println("update 입력 확인");
-			
+			String doc_id = request.getParameter("doc_id");
+			String index = request.getParameter("index");
 			String category = request.getParameter("category");
 			String lending_name = request.getParameter("lending_name");
 			String organizer_name = request.getParameter("organizer_name");
 			String short_url = request.getParameter("short_url");
+			String before_image = request.getParameter("image");
 			
-			String filePart = request.getParameter("uploadFile");
+			Part filePart = request.getPart("uploadFile");
+			String image = "";
 			
-			System.out.println("??test??");
-			System.out.println(short_url);
-			System.out.println("????????????? "+filePart);
+			//코드 수정 (해당 인덱스 안에 있는 내용 수정 / 아무거나 수정 누르게 되면 이미지 이름이 test로 변경)
+			BasicDBObject query = new BasicDBObject();
+			query.put("_id", new ObjectId(doc_id));
+			DBObject rdata = new BasicDBObject();
+			rdata.put("lending."+index+".category", category);
+			rdata.put("lending."+index+".lending_name", lending_name);
+			rdata.put("lending."+index+".organizer_name", organizer_name);
+			rdata.put("lending."+index+".short_url", short_url);
 			
+			try {
+				//안에 파일 들어있나 확인
+				image = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();		
+				
+				System.out.println("이미지 수정 o");
+				
+				// ======================== 이전파일 삭제 & 새로운파일 업로드 시작 (로컬에 올리기)
+				
+				
+				// ------------------ 폴더안에 있는 파일 삭제
+				System.out.println(before_image);
+				
+				String deleteFilePath = "D:\\"+"test"; //string주소가 에러나면 이런식으로 슬래쉬(/)부분마다 끊어서 연결해준다. 
+				File file = new File(deleteFilePath + File.separator + before_image);
+
+				//System.out.println("파일삭제 경로맞나????? "+file);
+				file.delete();			
+				// ------------------ 폴더안에 있는 파일 삭제 완료
+
+				
+				// 이미지 중복이름 방지
+				String time = getTime();
+				image = time + "_" + image;
+
+				System.out.println("중복이름 방지 : " + image);
+				//이미지 수정
+				rdata.put("lending."+index+".image", image);
+
+				//local에 저장한 경우, 이미지를 웹상에서 보기위해서는 FTP를 이용하거나 인터넷에 이미지가 올라가있는 상태여야 한다.
+				String uploadFilePath = "D:\\"+"test";
+				
+				//File.separator 사용하는 이유 : 리눅스와 윈도우의 파일 경로가 틀리기 때문에 이걸쓰면 자동으로 잡아준다.
+				System.out.println(" LOG :: [ 업로드 파일 경로 ] :: " + uploadFilePath + File.separator + image);
+				filePart.write(uploadFilePath + File.separator + image);
+				
+				// ======================== 파일업로드 끝
+				
+			} catch (NullPointerException e) {
+				System.out.println("이미지는 수정 x");
+				
+			}
+			
+
+
+			DBObject se = new BasicDBObject("$set", rdata);
+			coll.update(query,se);
+	
+
 		}// test.len끝
 
 	}// doGet끝

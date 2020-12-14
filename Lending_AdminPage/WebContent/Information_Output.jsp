@@ -84,7 +84,7 @@ $().ready(function(){
 		    	html+= "<td><img src=\""+link+image+"\" style=\"width:100px;\"></td>"; 
 		    	/* html+= "<td>"+image+"</td>"; */ 
 		    	html+= "<td><button class=\"btn btn-danger\" onclick=\"lending_delete("+i+",'"+image+"')\">삭제</button></td>";
-		    	html+= "<td><button class=\"btn btn-info\" onclick=\"lending_update("+i+",'"+category+"','"+lending_name+"','"+organizer_name+"','"+short_url+"')\">수정</button></td>";
+		    	html+= "<td><button class=\"btn btn-info\" onclick=\"lending_update("+i+",'"+category+"','"+lending_name+"','"+organizer_name+"','"+short_url+"','"+image+"')\">수정</button></td>";
 		    	html+= "</tr>";
 		    }
 		    
@@ -138,7 +138,7 @@ function lending_delete(index,image) {
 	
 }
 
-function lending_update(index,category,lending_name,organizer_name,short_url) {
+function lending_update(index,category,lending_name,organizer_name,short_url,image) {
 	$('#lending_info').hide();
 	
 	html="";
@@ -206,10 +206,13 @@ function lending_update(index,category,lending_name,organizer_name,short_url) {
 			formData.append('uploadFile',"");           
 		}
 		
+		formData.append("doc_id",doc_id);
+		formData.append("index",index);
 		formData.append("category",$('.category').val());
         formData.append("lending_name",$('.lending_name').val());
         formData.append("organizer_name",$('.organizer_name').val());
         formData.append("short_url",$('.short_url').val());
+        formData.append("image",image);
 
         var url = "/Lending_AdminPage/update.len";
         
