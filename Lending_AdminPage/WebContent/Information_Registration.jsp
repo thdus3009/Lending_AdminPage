@@ -125,6 +125,7 @@
 	            type: 'POST',
 	            success: function(result){
 	            	alert("업로드 성공!!");
+	            	window.location = "${pageContext.request.contextPath}/Information_Output.jsp";
 	            }
             });  
 

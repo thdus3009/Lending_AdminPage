@@ -53,8 +53,7 @@ public class LendingController extends HttpServlet {
 	}
 
 	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		request.setCharacterEncoding("UTF-8");
 		response.setCharacterEncoding("UTF-8");
@@ -73,7 +72,7 @@ public class LendingController extends HttpServlet {
 			int MongoDB_Port = 27017;
 			mongoClient = new MongoClient(MongoDB_IP, MongoDB_Port);
 
-			System.out.println("server 접속 성공");
+			System.out.println("server 접속 성공dd");
 
 			// 쓰기권한 부여
 			WriteConcern w = new WriteConcern(1, 2000);// 쓰게 락 갯수, 연결 시간 2000
@@ -84,7 +83,7 @@ public class LendingController extends HttpServlet {
 			DB db = mongoClient.getDB("lending");
 			// 컬렉션 가져오기
 			coll = db.getCollection("lending");
-			System.out.println("db,collection 접속 성공");
+			System.out.println("db,collection 접속 성공dd");
 			System.out.println();
 
 		} catch (Exception e) {
@@ -103,6 +102,7 @@ public class LendingController extends HttpServlet {
 				DBObject doc = cursor.next();
 
 				System.out.println("데이터 o");
+				System.out.println("------------------");
 				// System.out.println(doc.get("lending"));
 
 				out.println(doc);
@@ -111,7 +111,7 @@ public class LendingController extends HttpServlet {
 				// lending값에 아무것도 없을때 (java.util.NoSuchElementException)
 
 				System.out.println("데이터 x");
-
+				System.out.println("------------------");
 			}
 
 			// 등록(테스트버전)
@@ -325,11 +325,24 @@ public class LendingController extends HttpServlet {
 			res.addProperty("result", "OK");
 			out.println(res.getAsJsonObject());
 
-	} else if (request.getRequestURI().endsWith("update.len")) {
-		
-		System.out.println("Update");
-		
-	}// test.len끝
+			
+			//수정
+		} else if (request.getRequestURI().endsWith("update.len")) {
+			
+			System.out.println("update 입력 확인");
+			
+			String category = request.getParameter("category");
+			String lending_name = request.getParameter("lending_name");
+			String organizer_name = request.getParameter("organizer_name");
+			String short_url = request.getParameter("short_url");
+			
+			String filePart = request.getParameter("uploadFile");
+			
+			System.out.println("??test??");
+			System.out.println(short_url);
+			System.out.println("????????????? "+filePart);
+			
+		}// test.len끝
 
 	}// doGet끝
 
