@@ -35,9 +35,10 @@
 			<!-- 대관 정보 출력  -->
 		</div>
 		
-		<div id="lending_update">
-			<h1>Lending Update</h1>
-			<a class="b_btn" href="${pageContext.request.contextPath}/Information_Output.jsp" style="width:70px;">목록</a>
+		<div id="lending_upload">
+			<span class="register_sentence"><h1>Lending Registration</h1></span>
+			<span class="update_sentence"><h1>Lending Update</h1></span>
+			<a class="b_btn" href="javascript:lending_info();" style="width:70px;">목록</a>
 			<br>
 			카테고리값 : <input type="text" class="category"/>
 			<br><br>
@@ -47,11 +48,12 @@
 			<br><br>
 			short_URL : <input type="text" size="34" class="short_url"/>
 			<br><br>
-			이미지 : * 파일선택을 하지 않을경우 이전 이미지가 그대로 유지됩니다. <div id="preview"><img id="img1" /></div>
+			이미지 : <span class="update_sentence">* 파일선택을 하지 않을경우 이전 이미지가 그대로 유지됩니다.</span> <div id="preview"><img id="img1" /></div>
 			<br>
 			<input type="file" id="FILE_TAG" accept="image/*" />
 			<br>
-			<a class="btn btn-danger upload">전송</a>
+			<span class="register_sentence"><a class="btn btn-danger register_button">전송</a></span>
+			<span class="update_sentence"><a class="btn btn-danger update_button">전송</a></span>
 		</div>
 	</div>
 	
@@ -63,10 +65,13 @@ $().ready(function(){
 
 	lending_info();
 	
+	 $("#FILE_TAG").on("change", fileimage);
+	
 });
 
 function lending_info(){
-	$('#lending_update').hide();
+	$('#lending_upload').hide();
+	$('#lending_info').show();
 	
 	var url = "/Lending_AdminPage/loadAll.len";
 	
@@ -82,7 +87,7 @@ function lending_info(){
 			//console.log(lending.length);
 			var html = "";
 			html+= "<h1>Lending Info</h1>";
-			html+= "<a class=\"b_btn\" href=\"${pageContext.request.contextPath}/Information_Registration.jsp\">대관 추가</a>";
+			html+= "<a class=\"b_btn\" href=\"javascript:lending_register();\">대관 추가</a>";
 			html+= "<br>";
 			html+= "<table class=\"table\">";
 			html+= "<thead><tr>";
@@ -124,6 +129,53 @@ function lending_info(){
 		}
 	});
 }
+
+function lending_register(){
+	
+	$('#lending_info').hide();
+	$('#lending_upload').show();
+	$('.register_sentence').show();
+	$('.update_sentence').hide();
+}
+
+$(".register_button").click(function(){
+	var inputFile = $("#FILE_TAG");
+		var files = inputFile[0].files[0];
+		
+    if(!validImageType(files)) { 
+        alert("이미지파일 형식이 아닙니다.(.jpg .jpeg .png)");
+        return;
+    } 
+    
+    var formData = new FormData();
+    
+    formData.append('uploadFile',files);
+    formData.append("category",$('.category').val());
+    formData.append("lending_name",$('.lending_name').val());
+    formData.append("organizer_name",$('.organizer_name').val());
+    formData.append("short_url",$('.short_url').val());
+
+    
+    /* 아래 코드로 formData 값 확인가능 */
+    /* for (var pair of formData.entries()) { console.log(pair[0]+ ', ' + pair[1]); } */
+
+    
+    
+    /* processData는 일반적으로 서버에 전달되는 데이터가 String형태로 전달된다.이를 피하기 위해 false로 설정 해주어야함 */
+    /* contentType에서 파일을 보내줄 때는 multipart/form-data로 전송해야하기 때문에 false로 설정해준다.*/
+    $.ajax({
+        url: 'Lending_AdminPage/regist.len',
+        processData: false,
+        contentType: false,
+        data: formData,
+        type: 'POST',
+        success: function(result){
+        	alert("업로드 성공!!");
+        	location.href = "/Lending_AdminPage/";
+        	//main값 다시 꾸려주기
+        }
+    });  
+});
 
 function lending_delete(index) {
 	//console.log(index);
@@ -167,7 +219,9 @@ function lending_delete(index) {
 function lending_update(index) {
 	
 	$('#lending_info').hide();
-	$('#lending_update').show();
+	$('#lending_upload').show();
+	$('.register_sentence').hide();
+	$('.update_sentence').show();
 	
 	$(".category").val($(".c_"+index).children(".info_category").text());
 	$(".lending_name").val($(".c_"+index).children(".info_lending_name").text());
@@ -180,80 +234,88 @@ function lending_update(index) {
 	
 	// ---------------------------------------------------------------------------------------------------------
 	
-	$(document).ready(function() {
-        $("#FILE_TAG").on("change", fileimage);
-       
-    });
-	
-	function fileimage(e){
-		
-		var files = e.target.files;
-        var filesArr = Array.prototype.slice.call(files);
-        
-        
-        filesArr.forEach(function(f) {
-            if(!f.type.match("image.*")) {
-                alert("확장자는 이미지 확장자만 가능합니다.");
-                return;
-            }
 
-            var reader = new FileReader();
-            reader.onload = function(e) {        
-            	$("#preview > img").attr('style', "height:100px;");
-            	$("#preview > img").attr("src", e.target.result);
-            }
-            reader.readAsDataURL(f);
-        });
-    
-	};
-	
-	$(".upload").click(function(){
-		
-		var formData = new FormData();
-		
-		if($("#FILE_TAG").val()!=""){
-			
-			var inputFile = $("#FILE_TAG");
-      		var files = inputFile[0].files[0];
-			
-      		//파일 내용 변경
-      		formData.append('uploadFile',files);
-      		
-		}else{
-			//파일 내용 유지
-			formData.append('uploadFile',"");           
-		}
-		
-		formData.append("doc_id",doc_id);
-		formData.append("index",index);
-		formData.append("category",$('.category').val());
-        formData.append("lending_name",$('.lending_name').val());
-        formData.append("organizer_name",$('.organizer_name').val());
-        formData.append("short_url",$('.short_url').val());
-        formData.append("image",image);
-
-        var url = "/Lending_AdminPage/update.len";
-        
-		$.ajax({
-		 	url: url,
-            processData: false,
-            contentType: false,
-            data: formData,
-            type: 'POST',
-            success: function(result){
-            	alert("수정 성공!!");
-            	location.href = "/Lending_AdminPage/";
-            	/* $("#lending_update").hide();
-            	$("#lending_info").show(); */
-            }	
-		});
-		
-	});
-	
-	//이미지부분이 change될 경우 , ajax에 파일 업로드한다.
-	
 }
 
+function fileimage(e){
+	
+	var files = e.target.files;
+    var filesArr = Array.prototype.slice.call(files);
+    
+    
+    filesArr.forEach(function(f) {
+        if(!f.type.match("image.*")) {
+            alert("확장자는 이미지 확장자만 가능합니다.");
+            return;
+        }
+
+        var reader = new FileReader();
+        reader.onload = function(e) {        
+        	$("#preview > img").attr('style', "height:100px;");
+        	$("#preview > img").attr("src", e.target.result);
+        }
+        reader.readAsDataURL(f);
+    });
+
+};
+
+$(".update_button").click(function(){
+	
+	var formData = new FormData();
+	
+	if($("#FILE_TAG").val()!=""){
+		
+		var inputFile = $("#FILE_TAG");
+  		var files = inputFile[0].files[0];
+		
+  		//파일 내용 변경
+  		formData.append('uploadFile',files);
+  		
+	}else{
+		//파일 내용 유지
+		formData.append('uploadFile',"");           
+	}
+	
+	formData.append("doc_id",doc_id);
+	formData.append("index",index);
+	formData.append("category",$('.category').val());
+    formData.append("lending_name",$('.lending_name').val());
+    formData.append("organizer_name",$('.organizer_name').val());
+    formData.append("short_url",$('.short_url').val());
+    formData.append("image",image);
+
+    var url = "/Lending_AdminPage/update.len";
+    
+	$.ajax({
+	 	url: url,
+        processData: false,
+        contentType: false,
+        data: formData,
+        type: 'POST',
+        success: function(result){
+        	alert("수정 성공!!");
+        	location.href = "/Lending_AdminPage/";
+        	/* $("#lending_upload").hide();
+        	$("#lending_info").show(); */
+        }	
+	});
+	
+});
+
+function Avoid_Overlap(file){ //중복이름 방지
+	var dt = new Date();
+	var time = dt.getTime();
+	return time+file.name;
+}
+
+//이미지 여부 체크
+//찾는곳.indexOf(찾고자 하는것) = -1 (-1은 없음을 의미=false)
+function validImageType(files) {
+	  var result = ([ 'image/jpeg',
+	                    'image/png',
+	                    'image/jpg' ].indexOf(files.type) > -1);
+	  return result;
+};
 </script>
 </body>
 </html>

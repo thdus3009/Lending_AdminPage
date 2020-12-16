@@ -96,7 +96,7 @@
 			var inputFile = $("#FILE_TAG");
       		var files = inputFile[0].files[0];
       		
-             if(!validImageType(files)) { 
+            if(!validImageType(files)) { 
                 alert("이미지파일 형식이 아닙니다.(.jpg .jpeg .png)");
                 return;
             } 
