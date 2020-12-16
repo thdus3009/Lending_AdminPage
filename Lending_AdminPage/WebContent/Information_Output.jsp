@@ -224,7 +224,7 @@ function lending_update(index,category,lending_name,organizer_name,short_url,ima
             type: 'POST',
             success: function(result){
             	alert("수정 성공!!");
-            	//window.location = "${pageContext.request.contextPath}/Information_Output.jsp";
+            	location.href = "/Lending_AdminPage/";
             	/* $("#lending_update").hide();
             	$("#lending_info").show(); */
             }	
