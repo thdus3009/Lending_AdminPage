@@ -392,12 +392,13 @@ public class LendingController extends HttpServlet {
 				
 			}
 			
-
-
 			DBObject se = new BasicDBObject("$set", rdata);
 			coll.update(query,se);
-	
+			
+			//PrintWriter에 관련한 변수명 : out //서버에서 정보를 받고 내려오는 부분(String으로)
+			out.println(image);
 
+			
 		}// test.len끝
 
 	}// doGet끝

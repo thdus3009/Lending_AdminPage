@@ -31,20 +31,43 @@
 
 <body>
 	<div class="container">
-		<h1>Lending Info</h1>
 		<div id="lending_info">
 			<!-- 대관 정보 출력  -->
 		</div>
+		
 		<div id="lending_update">
-			<!-- 대관 정보 수정 -->
+			<h1>Lending Update</h1>
+			<a class="b_btn" href="${pageContext.request.contextPath}/Information_Output.jsp" style="width:70px;">목록</a>
+			<br>
+			카테고리값 : <input type="text" class="category"/>
+			<br><br>
+			대관명 : <input type="text" class="lending_name"/>
+			<br><br>
+			주최자 : <input type="text"  class="organizer_name"/>
+			<br><br>
+			short_URL : <input type="text" size="34" class="short_url"/>
+			<br><br>
+			이미지 : * 파일선택을 하지 않을경우 이전 이미지가 그대로 유지됩니다. <div id="preview"><img id="img1" /></div>
+			<br>
+			<input type="file" id="FILE_TAG" accept="image/*" />
+			<br>
+			<a class="btn btn-danger upload">전송</a>
 		</div>
 	</div>
+	
 <script type="text/javascript">
 
 var doc_id;
 
 $().ready(function(){
 
+	lending_info();
+	
+});
+
+function lending_info(){
+	$('#lending_update').hide();
+	
 	var url = "/Lending_AdminPage/loadAll.len";
 	
 	$.ajax({
@@ -58,6 +81,7 @@ $().ready(function(){
 			
 			//console.log(lending.length);
 			var html = "";
+			html+= "<h1>Lending Info</h1>";
 			html+= "<a class=\"b_btn\" href=\"${pageContext.request.contextPath}/Information_Registration.jsp\">대관 추가</a>";
 			html+= "<br>";
 			html+= "<table class=\"table\">";
@@ -77,14 +101,14 @@ $().ready(function(){
 		    	var link = "/image/";
 				
 		    	html+= "<tr class=\"c_"+i+"\">";
-		    	html+= "<td>"+category+"</td>";
-		    	html+= "<td>"+lending_name+"</td>";
-		    	html+= "<td>"+organizer_name+"</td>";
-		    	html+= "<td><a  href=\""+short_url+"\" target=\"_blank\" >"+short_url+"</a></td>";
+		    	html+= "<td class=\"info_category\">"+category+"</td>";
+		    	html+= "<td class=\"info_lending_name\">"+lending_name+"</td>";
+		    	html+= "<td class=\"info_organizer_name\">"+organizer_name+"</td>";
+		    	html+= "<td class=\"info_short_url\"><a  href=\""+short_url+"\" target=\"_blank\" >"+short_url+"</a></td>";
 		    	html+= "<td><img src=\""+link+image+"\" style=\"width:100px;\"></td>"; 
 		    	/* html+= "<td>"+image+"</td>"; */ 
-		    	html+= "<td><button class=\"btn btn-danger\" onclick=\"lending_delete("+i+",'"+image+"')\">삭제</button></td>";
-		    	html+= "<td><button class=\"btn btn-info\" onclick=\"lending_update("+i+",'"+category+"','"+lending_name+"','"+organizer_name+"','"+short_url+"','"+image+"')\">수정</button></td>";
+		    	html+= "<td><button class=\"btn btn-danger\" onclick=\"lending_delete("+i+")\">삭제</button></td>";
+		    	html+= "<td><button class=\"btn btn-info\" onclick=\"lending_update("+i+")\">수정</button></td>";
 		    	html+= "</tr>";
 		    }
 		    
@@ -98,12 +122,15 @@ $().ready(function(){
 		error : function(e){
 			console.log("현재 대관 anyone 부분에서 '등록된 대관 정보'가 없습니다.")
 		}
-	})
-	
-});
+	});
+}
 
-function lending_delete(index,image) {
+function lending_delete(index) {
 	//console.log(index);
+	var image = $(".c_"+index).find("img").attr('src');
+	image = image.split("/image/");
+	image = image[1];
+	//console.log(image[1]);
 	
 	var result = confirm("정말로 해당 대관내용을 삭제하시겠습니까?");
 	
@@ -138,10 +165,22 @@ function lending_delete(index,image) {
 	
 }
 
-function lending_update(index,category,lending_name,organizer_name,short_url,image) {
+function lending_update(index) {
+
 	$('#lending_info').hide();
+	$('#lending_update').show();
 	
-	html="";
+	$(".category").val($(".c_"+index).children(".info_category").text());
+	$(".lending_name").val($(".c_"+index).children(".info_lending_name").text());
+	$(".organizer_name").val($(".c_"+index).children(".info_organizer_name").text());
+	$(".short_url").val($(".c_"+index).children(".info_short_url").text());
+	
+	var image = $(".c_"+index).find("img").attr('src');
+	image = image.split("/image/");
+	image = image[1];
+	//console.log(image[1]);
+	
+/* 	html="";
 	html+="<a class=\"b_btn\" href=\"${pageContext.request.contextPath}/Information_Output.jsp\" style=\"width:70px;\">목록</a>";
 	html+="<br>";
 	html+="카테고리값 : <input type=\"text\" class=\"category\" value=\""+category+"\"/>";
@@ -159,7 +198,7 @@ function lending_update(index,category,lending_name,organizer_name,short_url,ima
 	html+="<a class=\"btn btn-danger upload\">전송</a>";
 
 	$('#lending_update').html(html);
-	
+	 */
 	// ---------------------------------------------------------------------------------------------------------
 	
 	$(document).ready(function() {
@@ -190,6 +229,8 @@ function lending_update(index,category,lending_name,organizer_name,short_url,ima
 	};
 	
 	$(".upload").click(function(){
+		//클릭이 왜 계속 수정한 만큼 반복되는 것인가???
+		console.log("왜 반복될까???");
 		
 		var formData = new FormData();
 		
@@ -223,9 +264,26 @@ function lending_update(index,category,lending_name,organizer_name,short_url,ima
             data: formData,
             type: 'POST',
             success: function(result){
-            	alert("수정 성공!!");
+            	console.log("수정 성공!!");
+            	//location.href = "/Lending_AdminPage";
+            	
+             	console.log("현재 인덱스: "+index);
+            	$(".c_"+index).children(".info_category").text($('.category').val());
+            	$(".c_"+index).children(".info_lending_name").text($('.lending_name').val());
+            	$(".c_"+index).children(".info_organizer_name").text($('.organizer_name').val());
+            	$(".c_"+index).children(".info_short_url").html("<a  href=\""+$('.short_url').val()+"\" target=\"_blank\" >"+$('.short_url').val()+"</a>");
+            	
+            	if(result.trim()!=""){
+            		$(".c_"+index).find("img").attr('src','/image/'+result.trim());
+            	}
+            	
+            	
             	$('#lending_info').show();
-            	$('#lending_update').hide();
+            	$('#lending_update').hide(); 
+
+            	//파일내용 지우기
+            	$("#FILE_TAG").val("");
+            	$("#preview > img").attr("src", "");
             	
             	//window.location = "${pageContext.request.contextPath}/Information_Output.jsp";
             	/* $("#lending_update").hide();
